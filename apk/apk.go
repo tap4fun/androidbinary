@@ -76,17 +76,17 @@ func (k *Apk) Close() error {
 }
 
 // Icon returns the icon image of the APK.
-func (k *Apk) Icon(resConfig *androidbinary.ResTableConfig) (image.Image, error) {
+func (k *Apk) Icon(resConfig *androidbinary.ResTableConfig) (image.Image, string, error) {
 	iconPath := k.getResource(k.manifest.App.Icon, resConfig)
 	if androidbinary.IsResID(iconPath) {
-		return nil, errors.New("unable to convert icon-id to icon path")
+		return nil, "", errors.New("unable to convert icon-id to icon path")
 	}
 	imgData, err := k.readZipFile(iconPath)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	m, _, err := image.Decode(bytes.NewReader(imgData))
-	return m, err
+	return m, iconPath, err
 }
 
 // Label returns the label of the APK.
